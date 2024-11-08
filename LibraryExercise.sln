@@ -3,14 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryExercise", "LibraryExercise.csproj", "{A609285B-0D74-4D96-9A1F-F3730E307E62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryExercise", "src\LibraryExercise.csproj", "{A609285B-0D74-4D96-9A1F-F3730E307E62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryExerciseTests", "..\LibraryExerciseTests\LibraryExerciseTests.csproj", "{72745670-F716-4743-9F9A-9A0003876EB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryExerciseTests", "tests\LibraryExerciseTests.csproj", "{72745670-F716-4743-9F9A-9A0003876EB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Description = Simple Library program created using Test Driven Development and SOLID design principles
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A609285B-0D74-4D96-9A1F-F3730E307E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
