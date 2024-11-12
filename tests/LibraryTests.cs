@@ -1,8 +1,5 @@
 ﻿namespace LibraryExerciseTests
 {
-    using System;
-    using System.Collections.Generic;
-
     using LibraryExercise;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,21 +8,22 @@
     public class LibraryTests
     {
         [TestMethod]
-        void Test_AddBook()
+        public void Add_a_book_to_the_library()
         {
             // Arrange
             Book book = new Book("Test", "Tester", "0123456789123");
             Library library = new Library();
 
             // Act
-            library.AddBook(book);
+            IResult result = library.AddBook(book);
 
             // Assert
+            Assert.AreEqual(true, result.Success);
             Assert.AreEqual(1, library.Count);
         }
 
         [TestMethod]
-        void Test_AddBook_NonUnique()
+        public void Add_the_same_book_twice_to_the_library()
         {
             // Arrange
             Book book = new Book("Test", "Tester", "0123456789123");
@@ -33,14 +31,48 @@
             library.AddBook(book);
 
             // Act
-            library.AddBook(book); // Book should not be added.
+            IResult result = library.AddBook(book);
 
             // Assert
+            Assert.AreEqual(false, result.Success);
             Assert.AreEqual(1, library.Count);
         }
 
         [TestMethod]
-        void Test_ISBNExists_Success()
+        public void Remove_a_book_from_the_library_with_the_same_ISBN_but_new_instance()
+        {
+            // Arrange
+            Book book = new Book("Test", "Tester", "0123456789123");
+            Library library = new Library();
+            library.AddBook(book);
+            Book otherBook = new Book(string.Empty, string.Empty, "0123456789123");
+
+            // Act
+            IResult result = library.RemoveBook(otherBook);
+
+            // Assert
+            Assert.AreEqual(true, result.Success, result.ToString());
+            Assert.AreEqual(0, library.Count);
+        }
+
+        [TestMethod]
+        public void Remove_a_book_from_the_library_with_the_same_book_instance()
+        {
+            // Arrange
+            Book book = new Book("Test", "Tester", "0123456789123");
+            Library library = new Library();
+            library.AddBook(book);
+
+            // Act
+            IResult result = library.RemoveBook(book);
+
+            // Assert
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(0, library.Count);
+        }
+
+        [TestMethod]
+        public void Check_if_an_ISBN_exists_using_the_same_book_code()
         {
             // Arrange
             var code = new ISBN("1234567891234");
@@ -50,24 +82,27 @@
             library.AddBook(book);
 
             // Act
-            bool result = library.IsbnExists(code);
+            IResult<bool> result = library.IsbnExists(code);
 
             // Assert
-            Assert.AreEqual(true, result);
+            Assert.AreEqual(code.GetHashCode(), book.GetHashCode());
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(true, result.Value);
         }
 
         [TestMethod]
-        void Test_IsbnExists_Fail()
+        public void Check_if_ISBN_does_not_exist_on_an_empty_library()
         {
             // Arrange
             var code = new ISBN("1234567891234");
             var library = new Library();
 
             // Act
-            bool result = library.IsbnExists(code);
+            IResult<bool> result = library.IsbnExists(code);
 
             // Assert
-            Assert.AreEqual(false, result);
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(false, result.Value);
         }
     }
 }

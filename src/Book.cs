@@ -45,5 +45,11 @@
         /// Gets the unique ISBN code for the book.
         /// </summary>
         public ISBN ISBN { get; }
+
+        /// <inheritdoc cref="GetHashCode"/>
+        public override int GetHashCode()
+        {
+            return this.ISBN.GetHashCode();
+        }
     }
 }

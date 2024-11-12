@@ -31,6 +31,18 @@
             this.Value = value;
         }
 
+        /// <inheritdoc cref="Equals"/>>
+        public override bool Equals(object? obj)
+        {
+            return obj is ISBN isbn && isbn.Value.Equals(this.Value, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        /// <inheritdoc cref="GetHashCode"/>
+        public override int GetHashCode()
+        {
+            return this.Value.GetHashCode();
+        }
+
         /// <summary>
         /// Checks if all characters of a string a numeric.
         /// </summary>

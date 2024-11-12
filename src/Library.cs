@@ -1,87 +1,84 @@
 ﻿namespace LibraryExercise
 {
+    using System.Diagnostics;
+
+    /// <summary>
+    /// Represents a library system that manages books, allowing users to add, remove and check the existence.
+    /// As well as borrowing, returning and checking availability of a book.
+    /// </summary>
+    /// <remarks>
+    /// Implements both <see cref="IBookLibrary"/> and <see cref="IBookBorrowingService"/> 
+    /// to provide complete management and borrowing functionality for <see cref="Book"/> objects.
+    /// This class can be used to perform operations on a library's collection, 
+    /// as well as to handle user borrowing activity.
+    /// </remarks>
     public class Library : IBookLibrary, IBookBorrowingService
     {
+        /// <summary>
+        /// Internal list of all books present in the library.
+        /// </summary>
+        internal readonly HashSet<Book> Books = new ();
 
-        private List<Book> m_Books;
+        /// <summary>
+        /// Hash set of all borrowed book <see cref="ISBN"/> codes.
+        /// </summary>
+        internal readonly HashSet<Book> Borrowed = new ();
 
-        private HashSet<ISBN> m_Isbns;
+        /// <inheritdoc cref="IBookLibrary.Count"/>
+        public int Count => this.Books.Count;
 
-        private HashSet<ISBN> m_Borrowed;
-
-        public int Count => m_Books.Count;
-
-        public Library()
+        /// <inheritdoc cref="IBookLibrary.AddBook"/>
+        public IResult AddBook(Book book)
         {
-            this.m_Books = new List<Book>();
-            this.m_Isbns = new HashSet<ISBN>();
-            this.m_Borrowed = new HashSet<ISBN>();
+            return !this.Books.Add(book) ? Result.FailResult("Book already exists in the library.") : Result.SuccessResult();
         }
 
-        public void AddBook(Book book)
+        /// <inheritdoc cref="IBookLibrary.RemoveBook"/>
+        public IResult RemoveBook(Book book)
         {
-            if (this.m_Isbns.Contains(book.ISBN))
+            if (this.Books.Count(b => b.ISBN.Equals(book.ISBN)) == 0)
             {
-                return;
+                return Result.FailResult("Book does not exist in the library.");
             }
 
-            this.m_Books.Add(book);
-            this.m_Isbns.Add(book.ISBN);
+            bool success = this.Books.RemoveWhere(b => b.ISBN.Equals(book.ISBN)) == 1;
+            return !success ? Result.FailResult("Failed to remove book from the library.") : Result.SuccessResult();
         }
 
-        public void RemoveBook(Book book)
+        /// <inheritdoc cref="IBookLibrary.RemoveByIsbn"/>
+        public IResult RemoveByIsbn(ISBN isbn)
         {
-            if (!this.m_Isbns.Contains(book.ISBN))
-            {
-                return;
-            }
-
-            this.m_Books.Remove(book);
-            this.m_Isbns.Remove(book.ISBN);
+            return RemoveBook(new Book(string.Empty, string.Empty, isbn));
         }
 
-        public void RemoveByIsbn(ISBN isbn)
+        /// <inheritdoc cref="IBookLibrary.BookExists"/>
+        public IResult<bool> BookExists(Book book)
         {
-            if (!this.m_Isbns.Contains(isbn))
-            {
-                return;
-            }
-
-            this.m_Books.RemoveAll(b => b.ISBN.Equals(isbn));
-            this.m_Isbns.Remove(isbn);
+            return Result<bool>.SuccessResult(this.Books.Contains(book));
         }
 
-        public bool BookExists(Book book)
+        /// <inheritdoc cref="IBookLibrary.IsbnExists"/>
+        public IResult<bool> IsbnExists(ISBN isbn)
         {
-            return this.m_Books.Contains(book);
+            return Result<bool>.SuccessResult(this.Books.Any(b => b.ISBN.Equals(isbn)));
         }
 
-        public bool IsbnExists(ISBN isbn)
+        /// <inheritdoc cref="IBookBorrowingService.BorrowBook"/>
+        public IResult BorrowBook(Book book)
         {
-            return this.m_Isbns.Contains(isbn);
+            return !this.Borrowed.Add(book) ? Result.FailResult("Book was already borrowed.") : Result.SuccessResult();
         }
 
-        public void BorrowBook(Book book)
+        /// <inheritdoc cref="IBookBorrowingService.IsBookAvailable"/>
+        public IResult<bool> IsBookAvailable(Book book)
         {
-            if (!this.m_Borrowed.Add(book.ISBN))
-            {
-                throw new Exception($"Book with ISBN: {book.ISBN} has already been borrowed!");
-            }
+            return Result<bool>.SuccessResult(!this.Borrowed.Contains(book));
         }
 
-        public bool IsBookAvailable(Book book)
+        /// <inheritdoc cref="IBookBorrowingService.ReturnBook"/>
+        public IResult ReturnBook(Book book)
         {
-            return !this.m_Borrowed.Contains(book.ISBN);
-        }
-
-        public void ReturnBook(Book book)
-        {
-            if (!this.m_Borrowed.Contains(book.ISBN))
-            {
-                return;
-            }
-
-            this.m_Borrowed.Remove(book.ISBN);
+            return !this.Borrowed.Remove(book) ? Result.FailResult("Book was not borrowed.") : Result.SuccessResult();
         }
     }
 }
