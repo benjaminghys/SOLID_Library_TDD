@@ -3,6 +3,8 @@
     using LibraryExercise;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    // ReSharper disable StyleCop.SA1600
+    [TestCategory("BookLibrary")]
     [TestClass]
     public class BookLibraryTests
     {
@@ -11,14 +13,14 @@
         {
             // Arrange
             Book book = new Book("Test", "Tester", "0123456789123");
-            BookLibrary bookLibrary = new BookLibrary();
+            IBookLibrary bookLibrary = new BookLibrary();
 
             // Act
             IResult result = bookLibrary.AddBook(book);
 
             // Assert
-            Assert.AreEqual(true, result.Success);
-            Assert.AreEqual(1, bookLibrary.Count);
+            Assert.AreEqual(true, result.Success, $"Adding a book to an empty library should always work: {result.ErrorMessage}");
+            Assert.AreEqual(1, bookLibrary.Count, "Only 1 book was added.");
         }
 
         [TestMethod]
@@ -26,15 +28,15 @@
         {
             // Arrange
             Book book = new Book("Test", "Tester", "0123456789123");
-            BookLibrary bookLibrary = new BookLibrary();
+            IBookLibrary bookLibrary = new BookLibrary();
             bookLibrary.AddBook(book);
 
             // Act
             IResult result = bookLibrary.AddBook(book);
 
             // Assert
-            Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(1, bookLibrary.Count);
+            Assert.AreEqual(false, result.Success, "Adding the same book twice should always fail.");
+            Assert.AreEqual(1, bookLibrary.Count, "Only 1 book should exist, as the ISBN should be unique.");
         }
 
         [TestMethod]
@@ -42,16 +44,16 @@
         {
             // Arrange
             Book book = new Book("Test", "Tester", "0123456789123");
-            BookLibrary bookLibrary = new BookLibrary();
+            IBookLibrary bookLibrary = new BookLibrary();
             bookLibrary.AddBook(book);
-            Book otherBook = new Book(string.Empty, string.Empty, "0123456789123");
+            Book otherBook = new Book("other", "author", "0123456789123");
 
             // Act
             IResult result = bookLibrary.RemoveBook(otherBook);
 
             // Assert
-            Assert.AreEqual(true, result.Success, result.ToString());
-            Assert.AreEqual(0, bookLibrary.Count);
+            Assert.AreEqual(true, result.Success, $"Removing a book with the same ISBN should always work: {result.ErrorMessage}");
+            Assert.AreEqual(0, bookLibrary.Count, "Removed the only book from the library");
         }
 
         [TestMethod]
@@ -59,15 +61,15 @@
         {
             // Arrange
             Book book = new Book("Test", "Tester", "0123456789123");
-            BookLibrary bookLibrary = new BookLibrary();
+            IBookLibrary bookLibrary = new BookLibrary();
             bookLibrary.AddBook(book);
 
             // Act
             IResult result = bookLibrary.RemoveBook(book);
 
             // Assert
-            Assert.AreEqual(true, result.Success);
-            Assert.AreEqual(0, bookLibrary.Count);
+            Assert.AreEqual(true, result.Success, $"Removing the same identical book should always work: {result.ErrorMessage}");
+            Assert.AreEqual(0, bookLibrary.Count, "Removed the only book from the library");
         }
 
         [TestMethod]
@@ -81,12 +83,12 @@
             library.AddBook(book);
 
             // Act
-            IResult<bool> result = library.IsbnExists(code);
+            IResult<bool> result = library.IsAvailable(code);
 
             // Assert
-            Assert.AreEqual(code.GetHashCode(), book.GetHashCode());
-            Assert.AreEqual(true, result.Success);
-            Assert.AreEqual(true, result.Value);
+            Assert.AreEqual(code.GetHashCode(), book.GetHashCode(), "Books are hashed by their ISBN code.");
+            Assert.AreEqual(true, result.Success, "Using the same ISBN code to check if a book exists should work.");
+            Assert.AreEqual(true, result.Value, "The result of the function should be true.");
         }
 
         [TestMethod]
@@ -97,11 +99,11 @@
             var library = new BookLibrary();
 
             // Act
-            IResult<bool> result = library.IsbnExists(code);
+            IResult<bool> result = library.IsAvailable(code);
 
             // Assert
-            Assert.AreEqual(true, result.Success);
-            Assert.AreEqual(false, result.Value);
+            Assert.AreEqual(true, result.Success, "checking if a book exists should work.");
+            Assert.AreEqual(false, result.Value, "An empty library should always return false.");
         }
     }
 }
