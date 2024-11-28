@@ -24,6 +24,35 @@
         public int Count => Books.Count;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="BookLibrary"/> class with no books.
+        /// </summary>
+        public BookLibrary()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BookLibrary"/> class containing the given books.
+        /// </summary>
+        /// <param name="books">The initial books part of the library.</param>
+        public BookLibrary(IEnumerable<Book> books)
+        {
+            foreach (var book in books)
+            {
+                Books.Add(book);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BookLibrary"/> class. 
+        /// Copy constructor of the <see cref="BookLibrary"/> class.
+        /// </summary>
+        /// <param name="emptyBookLibrary">Other <see cref="BookLibrary"/>.</param>
+        public BookLibrary(BookLibrary emptyBookLibrary)
+        {
+            Books = emptyBookLibrary.Books;
+        }
+
+        /// <summary>
         /// Adds a new book to the library.
         /// </summary>
         /// <param name="book">The <see cref="Book"/> to add to the library.</param>

@@ -14,7 +14,7 @@
         /// - or -
         /// When it consists of non-numerical characters.
         /// </exception>
-        /// <remarks>For complexity’s sake ISBN are fixed to 13 numerical characters and no checksum will be performed.</remarks>
+        /// <remarks>For this project's complexity sake ISBN codes are fixed to 13 numerical characters and no checksum will be performed.</remarks>
         public ISBN(string value)
         {
             ArgumentNullException.ThrowIfNull(value, nameof(value));
@@ -52,7 +52,7 @@
         /// Checks if all characters of a string a numeric.
         /// </summary>
         /// <param name="str">The string to check.</param>
-        /// <returns>True when all characters are numerical. False otherwise.</returns>
+        /// <returns><c>true</c> when all characters are numerical, <c>false</c> otherwise.</returns>
         private static bool IsDigitsOnly(string str)
         {
             return str.All(c => c >= '0' && c <= '9');
