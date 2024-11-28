@@ -1,3 +1,4 @@
+[![.NET](https://github.com/benjaminghys/SOLID_Library_TDD/actions/workflows/dotnet.yml/badge.svg?branch=master&event=status)](https://github.com/benjaminghys/SOLID_Library_TDD/actions/workflows/dotnet.yml)
 # Library Exercise
 
 Welcome to the **Library Management System**! This project is a solution to an exercise focused on applying **SOLID design principles** and **Test-Driven Development (TDD)** to build a simple, functional library system.
